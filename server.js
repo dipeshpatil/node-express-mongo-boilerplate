@@ -5,7 +5,7 @@ const { appConfig } = require("./config/config");
 
 const connectDatabase = require("./config/database");
 
-const userRoute = require("./routes/api/users");
+const userRoute = require("./routes/api/user");
 
 const app = express();
 
