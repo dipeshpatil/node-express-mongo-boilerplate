@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "cp ./config/config.yml.sample ./config/config.yml && cp ./config/.env.sample ./config/.env"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
