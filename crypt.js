@@ -1,77 +1,56 @@
 const crypto = require("crypto");
 const fs = require("fs");
-const path = require("path");
-const zlib = require("zlib");
-
-const { Transform } = require("stream");
 
 if (![process.env.NODE_ENV, process.env.APP_ENV].includes("production"))
   require("dotenv").config({ path: "./config/environments/.env" });
 
-class AppendInitVect extends Transform {
-  constructor(initVect, opts) {
-    super(opts);
-    this.initVect = initVect;
-    this.appended = false;
-  }
+const configFilePath = "./config/environments";
 
-  _transform(chunk, encoding, cb) {
-    if (!this.appended) {
-      this.push(this.initVect);
-      this.appended = true;
-    }
-    this.push(chunk);
-    cb();
-  }
-}
+const encrypt = ({ fileName }) => {
+  const salt = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(16);
+  const key = crypto.pbkdf2Sync(
+    process.env.CIPHER_KEY,
+    salt,
+    100000,
+    32,
+    "sha256"
+  );
+  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+  const input = fs.readFileSync(`${configFilePath}/${fileName}`);
+  const encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
 
-function getCipherKey(password) {
-  return crypto.createHash("sha256").update(password).digest();
-}
+  fs.writeFileSync(
+    `${configFilePath}/${fileName}.enc`,
+    salt.toString("hex") + iv.toString("hex") + encrypted.toString("hex")
+  );
+};
 
-function encrypt({ file, password }) {
-  const initVect = crypto.randomBytes(16);
-  const CIPHER_KEY = getCipherKey(password);
-  const readStream = fs.createReadStream(file);
-  const gzip = zlib.createGzip();
-  const cipher = crypto.createCipheriv("aes256", CIPHER_KEY, initVect);
-  const appendInitVect = new AppendInitVect(initVect);
-  const writeStream = fs.createWriteStream(path.join(file + ".enc"));
+const decrypt = ({ fileName }) => {
+  const data = fs.readFileSync(`${configFilePath}/${fileName}.enc`);
+  const saltHex = data.slice(0, 32).toString("utf8");
+  const ivHex = data.slice(32, 64).toString("utf8");
+  const encryptedHex = data.slice(64).toString("utf8");
+  const derivedKey = crypto.pbkdf2Sync(
+    process.env.CIPHER_KEY,
+    Buffer.from(saltHex, "hex"),
+    100000,
+    32,
+    "sha256"
+  );
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    derivedKey,
+    Buffer.from(ivHex, "hex")
+  );
+  const decrypted = Buffer.concat([
+    decipher.update(Buffer.from(encryptedHex, "hex")),
+    decipher.final(),
+  ]);
 
-  readStream.pipe(gzip).pipe(cipher).pipe(appendInitVect).pipe(writeStream);
-}
+  fs.writeFileSync(`${configFilePath}/${fileName}`, decrypted);
+};
 
-function decrypt({ file, password }) {
-  const readInitVect = fs.createReadStream(file, { end: 15 });
-
-  let initVect;
-  readInitVect.on("data", (chunk) => {
-    initVect = chunk;
-  });
-
-  readInitVect.on("close", () => {
-    const cipherKey = getCipherKey(password);
-    const readStream = fs.createReadStream(file, { start: 16 });
-    const decipher = crypto.createDecipheriv("aes256", cipherKey, initVect);
-    const unzip = zlib.createUnzip();
-    const writeStream = fs.createWriteStream(file.split(".enc")[0]);
-
-    readStream.pipe(decipher).pipe(unzip).pipe(writeStream);
-  });
-}
-
-if (process.env.TYPE === "decrypt") {
-  decrypt({
-    file: `./config/environments/config.${
-      process.env.NODE_ENV ?? process.env.APP_ENV
-    }.yml.enc`,
-    password: process.env.CIPHER_KEY,
-  });
-} else {
-  encrypt({
-    file: `./config/environments/config.${
-      process.env.NODE_ENV ?? process.env.APP_ENV
-    }.yml`,
-    password: process.env.CIPHER_KEY,
-  });
-}
+(process.env.TYPE === "decrypt" ? decrypt : encrypt)({
+  fileName: `config.${process.env.NODE_ENV ?? process.env.APP_ENV}.yml`,
+});
