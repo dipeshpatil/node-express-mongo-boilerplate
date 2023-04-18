@@ -7,7 +7,11 @@ let config = null;
 try {
   config = yaml.load(
     fs.readFileSync(
-      path.join(__dirname, "environments", `config.${process.env.APP_ENV}.yml`),
+      path.join(
+        __dirname,
+        "environments",
+        `config.${process.env.NODE_ENV ?? process.env.APP_ENV}.yml`
+      ),
       "utf8"
     )
   );
