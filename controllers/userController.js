@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 
 const BaseController = require("./baseController");
 
-const userSchema = require("./../models/user");
-
-const User = mongoose.model("user", userSchema);
+const { User } = require("./../models/user");
 
 class UserController extends BaseController {
   constructor() {
