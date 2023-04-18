@@ -25,6 +25,6 @@ app.use("/api/users", userRoute);
 // Server Port Configuration
 const PORT = appConfig.port;
 app.listen(PORT, () => {
-  console.log(`APP MODE => [${process.env.APP_ENV}]`);
+  console.log(`APP MODE => [${process.env.NODE_ENV ?? process.env.APP_ENV}]`);
   console.log(`SERVER PORT => [${PORT}]`);
 });
