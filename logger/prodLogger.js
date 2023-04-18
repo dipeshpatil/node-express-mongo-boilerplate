@@ -12,7 +12,6 @@ const prodLogger = () => {
   return createLogger({
     level: "debug",
     format: combine(
-      format.colorize(),
       label({ label: "right meow!" }),
       timestamp({ format: "HH:mm:ss" }),
       myFormat
