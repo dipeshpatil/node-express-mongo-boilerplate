@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "postinstall": "cp ./config/config.yml.sample ./config/config.yml && cp ./config/.env.sample ./config/.env"
+    "encrypt:config": "TYPE=encrypt node crypt.js",
+    "decrypt:config": "TYPE=decrypt node crypt.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

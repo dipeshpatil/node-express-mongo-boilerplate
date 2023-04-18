@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Config Files
-config.yml
+config.*.yml

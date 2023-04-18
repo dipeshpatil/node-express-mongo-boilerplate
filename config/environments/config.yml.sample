@@ -1,0 +1,17 @@
+# Database Config
+db:
+  host:
+  username:
+  password:
+
+# App Config
+app:
+  protocol: http
+  host: localhost
+  port: 3000
+  api_prefix: /api
+
+  # JWT
+  jwtSecret:
+  jwtOptions:
+    expiresIn: 360000
