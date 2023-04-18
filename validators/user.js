@@ -1,7 +1,6 @@
 const { check } = require("express-validator");
 
 module.exports = {
-  // Checks if name, email and password fields are defined and returns Boolean Array
   basicUserRegistrationValidator: [
     check("name", "Name is required").not().isEmpty(),
     check("email", "Please include a valid email").isEmail(),
