@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const BaseController = require("./baseController");
 
 const { User } = require("./../models/user");
