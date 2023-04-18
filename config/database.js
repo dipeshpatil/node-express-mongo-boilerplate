@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const { dbConfig } = require("./config");
+const logger = require("../logger");
 
 const connectDatabase = async () => {
   try {
@@ -11,10 +12,9 @@ const connectDatabase = async () => {
         useUnifiedTopology: true,
       }
     );
-    console.log("DATABASE => [connected]");
+    logger.info("DATABASE => [connected]");
   } catch (err) {
-    console.error(err.message);
-    process.exit(1);
+    logger.error(err.message);
   }
 };
 
