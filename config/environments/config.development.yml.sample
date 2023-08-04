@@ -1,0 +1,17 @@
+# Database Config
+db:
+  dbname: recipe-app
+  host:
+  username:
+  password:
+
+# App Config
+app:
+  protocol: http
+  host: localhost
+  port: 3000
+  api_prefix: /api
+
+  jwtSecret:
+  jwtOptions:
+    expiresIn: 3600000
