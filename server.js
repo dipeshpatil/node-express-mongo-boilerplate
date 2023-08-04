@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json({ extended: false }));
 
 // Server Check
-app.get("/", (req, res) => res.send("API Running"));
+app.get("/", (req, res) => res.send("API Running!"));
 
 // Register Routes
 app.use("/api/users", userRoute);
@@ -27,6 +27,6 @@ app.use("/api/users", userRoute);
 // Server Port Configuration
 const PORT = appConfig.port;
 app.listen(PORT, () => {
-  logger.info(`APP MODE => [${process.env.NODE_ENV ?? process.env.APP_ENV}]`);
-  logger.info(`SERVER PORT => [${PORT}]`);
+  console.log(`APP MODE => [${process.env.NODE_ENV ?? process.env.APP_ENV}]`);
+  console.log(`SERVER PORT => [${PORT}]`);
 });

@@ -11,11 +11,15 @@
     "decrypt:config": "TYPE=decrypt node crypt.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.15.0",
     "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.0.3",
+    "random-avatar-generator": "^2.0.0",
     "winston": "^3.8.2",
     "winston-mongodb": "^5.1.1"
   },
